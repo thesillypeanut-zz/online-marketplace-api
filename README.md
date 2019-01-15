@@ -1,0 +1,38 @@
+# Online Marketplace API
+
+## Requirements
+
+On a Linux environment, run the following commands:
+```bash
+sudo add-apt-repository ppa:jonathonf/python-3.6
+sudo apt-get update
+sudo apt-get install python3.6 python3.6-dev
+sudo apt-get update
+sudo apt-get install python3-pip
+sudo pip3 install virtualenv
+```
+
+## Getting Started
+
+Clone this repository:
+```bash
+git clone 
+cd online-marketplace-api/
+```
+Create and activate your virtual environment:
+```bash
+virtualenv venv
+source venv/bin/activate
+```
+Install your project dependencies:
+```bash
+pip install -r requirements.txt
+```
+Run the code:
+```bash
+python3 app.py
+```
+To deactivate your virtual environment, run:
+```bash
+deactivate
+```
