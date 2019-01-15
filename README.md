@@ -1,5 +1,7 @@
 # Online Marketplace API
 
+A barebone server side web API that uses CRUD operations to query and simulate transactions in an online marketplace, built using the Flask microframework and postgreSQL database. 
+
 ## Requirements
 
 On a Linux environment, run the following commands:
@@ -16,7 +18,7 @@ sudo pip3 install virtualenv
 
 Clone this repository:
 ```bash
-git clone 
+git clone https://github.com/thesillypeanut/online-marketplace-api.git
 cd online-marketplace-api/
 ```
 Create and activate your virtual environment:
