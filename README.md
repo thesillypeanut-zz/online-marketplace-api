@@ -1,6 +1,6 @@
 # Online Marketplace API
 
-A barebone server side web API that uses CRUD operations to query and simulate transactions in an online marketplace, built using the Flask microframework and postgreSQL database. 
+A simple server side web API that uses CRUD operations to query products and simulate shopping cart transactions in an online marketplace, built using the Flask microframework and SQLite database. 
 
 ## Requirements
 
