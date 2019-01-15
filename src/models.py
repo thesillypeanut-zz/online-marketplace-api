@@ -38,6 +38,7 @@ class CartItem(db.Model):
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     date_added = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    quantity = db.Column(db.Integer(), nullable=False)
 
     def __repr__(self):
-        return f"CartItem('{self.cart_id}', '{self.product_id}', '{self.date_added}')"
+        return f"CartItem('{self.cart_id}', '{self.product_id}', '{self.date_added}', '{self.quantity}')"

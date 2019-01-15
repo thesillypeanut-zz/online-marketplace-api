@@ -10,6 +10,12 @@ def add_routes(app):
         endpoint=list_products.__name__
     ),
     app.add_url_rule(
+        rule=f'{_PRODUCT_URL_PATH}/available',
+        methods=['GET'],
+        view_func=list_available_products,
+        endpoint=list_available_products.__name__
+    ),
+    app.add_url_rule(
         rule=f'{_PRODUCT_URL_PATH}/<product_id>',
         methods=['GET'],
         view_func=get_product,
@@ -27,6 +33,10 @@ def add_routes(app):
         view_func=delete_product,
         endpoint=delete_product.__name__
     )
+
+
+def list_available_products():
+    pass
 
 
 def list_products():

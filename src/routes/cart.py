@@ -36,7 +36,7 @@ def add_routes(app):
 
 
 def list_carts():
-    pass
+    return "Hello"
 
 
 def get_cart(cart_id):
