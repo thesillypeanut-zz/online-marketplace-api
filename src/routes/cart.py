@@ -1,4 +1,7 @@
+from flask import request
+
 from src import constants
+from src.services import cart_service
 
 _CART_URL_PATH = f'{constants.BASE_URL_PATH}/carts'
 
@@ -36,20 +39,20 @@ def add_routes(app):
 
 
 def list_carts():
-    return "Hello"
+    return cart_service.get_carts()
 
 
 def get_cart(cart_id):
-    pass
+    return cart_service.get_cart(cart_id)
 
 
 def create_cart():
-    pass
+    return cart_service.create_cart(request.json)
 
 
 def edit_cart(cart_id):
-    pass
+    return cart_service.edit_cart(cart_id, request.json)
 
 
 def delete_cart(cart_id):
-    pass
+    return cart_service.delete_cart(cart_id)
