@@ -1,5 +1,4 @@
 import logging
-from flask import jsonify, make_response
 from werkzeug import exceptions
 
 from src import db
@@ -10,14 +9,14 @@ def delete_entity_instance(db_model, entity_id):
         entity = db_model.query.get_or_404(entity_id)
     except exceptions.NotFound:
         logging.error(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.')
-        return make_response('', 404)
+        return '', 404
 
     db.session.delete(entity)
     db.session.commit()
-    return make_response('', 204)
+    return '', 204
 
 
-def edit_entity_instance(db_model, entity_id, updated_entity_instance, serialize=True):
+def edit_entity_instance(db_model, entity_id, updated_entity_instance):
     try:
         entity = db_model.query.get_or_404(entity_id)
     except exceptions.NotFound:
@@ -29,49 +28,37 @@ def edit_entity_instance(db_model, entity_id, updated_entity_instance, serialize
 
     db.session.commit()
 
-    if serialize:
-        entity = entity.serialize()
-
-    return jsonify(entity)
+    return entity.serialize()
 
 
-def filter_by(db_model, filter_by, serialize=True):
+def filter_by(db_model, filter_by):
     try:
         entities = db_model.query.filter_by(**filter_by).all()
     except Exception:
         logging.error(f'Exception encountered while querying "{db_model.__name__}" filtered by "{filter_by}".')
         raise
 
-    if serialize:
-        entities = [entity.serialize() for entity in entities]
-
-    return jsonify(entities)
+    return [entity.serialize() for entity in entities]
 
 
-def get_entity_instances(db_model, order_by=None, serialize=True):
+def get_entity_instances(db_model, order_by=None):
     try:
         entities = db_model.query.order_by(order_by).all()
     except Exception:
         logging.error(f'Exception encountered while querying "{db_model.__name__}" ordered by "{order_by}".')
         raise
 
-    if serialize:
-        entities = [entity.serialize() for entity in entities]
-
-    return jsonify(entities)
+    return [entity.serialize() for entity in entities]
 
 
-def get_entity_instance_by_id(db_model, entity_id, serialize=True):
+def get_entity_instance_by_id(db_model, entity_id):
     try:
         entity = db_model.query.get_or_404(entity_id)
     except exceptions.NotFound:
         logging.error(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.')
         raise
 
-    if serialize:
-        entity = entity.serialize()
-
-    return jsonify(entity)
+    return entity.serialize()
 
 
 def post_entity_instance(db_model, entity_instance):
@@ -79,4 +66,4 @@ def post_entity_instance(db_model, entity_instance):
     db.session.add(entity)
     db.session.commit()
 
-    return jsonify(entity.serialize())
+    return entity.serialize()
