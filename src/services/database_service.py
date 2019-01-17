@@ -34,7 +34,10 @@ def edit_entity_instance(db_model, entity_id, updated_entity_instance):
 def get_entity_instances(db_model, order_by=None, filter_by=None):
     try:
         if filter_by:
-            entities = db_model.query.order_by(order_by).filter_by(**filter_by.to_dict()).all()
+            entities = (
+                db_model.query.order_by(order_by).filter_by(**filter_by.to_dict()).all()
+                if type(filter_by) != dict else db_model.query.order_by(order_by).filter_by(**filter_by).all()
+            )
         else:
             entities = db_model.query.order_by(order_by).all()
     except Exception:
@@ -54,7 +57,7 @@ def get_entity_instance_by_id(db_model, entity_id):
     return entity.serialize()
 
 
-def post_entity_instance(db_model, entity_instance):
+def post_entity_instance(db_model, entity_instance=None):
     entity = db_model(**entity_instance) if entity_instance else db_model()
     db.session.add(entity)
     db.session.commit()

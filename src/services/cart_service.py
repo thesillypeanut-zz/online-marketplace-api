@@ -1,23 +1,13 @@
-import logging
-from datetime import datetime
-
-from src import constants
 from src.models import Cart
 from src.services import database_service
 
 
-def create(cart_instance):
-    _ensure_date_created_field_is_valid(cart_instance)
-    return database_service.post_entity_instance(Cart, cart_instance)
+def create():
+    return database_service.post_entity_instance(Cart)
 
 
 def delete(cart_id):
     return database_service.delete_entity_instance(Cart, cart_id)
-
-
-def update(cart_id, cart_instance):
-    _ensure_date_created_field_is_valid(cart_instance)
-    return database_service.edit_entity_instance(Cart, cart_id, cart_instance)
 
 
 def get(cart_id):
@@ -26,12 +16,3 @@ def get(cart_id):
 
 def list_all():
     return database_service.get_entity_instances(Cart, Cart.date_created)
-
-
-def _ensure_date_created_field_is_valid(cart_instance):
-    if cart_instance and cart_instance.get('date_created'):
-        try:
-            cart_instance['date_created'] = datetime.strptime(cart_instance['date_created'], constants.DATETIME_FORMAT)
-        except ValueError:
-            logging.error(f'Value for "date_created" field must match format: {constants.DATETIME_FORMAT}')
-            raise

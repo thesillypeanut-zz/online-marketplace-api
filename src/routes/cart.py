@@ -1,5 +1,3 @@
-from flask import request
-
 from src import constants
 from src.routes.decorators import json_response
 from src.services import cart_service
@@ -20,18 +18,6 @@ def add_routes(app):
         endpoint=get_cart.__name__
     ),
     app.add_url_rule(
-        rule=f'{_CART_URL_PATH}/',
-        methods=['POST'],
-        view_func=create_cart,
-        endpoint=create_cart.__name__
-    ),
-    app.add_url_rule(
-        rule=f'{_CART_URL_PATH}/<cart_id>',
-        methods=['PUT'],
-        view_func=edit_cart,
-        endpoint=edit_cart.__name__
-    ),
-    app.add_url_rule(
         rule=f'{_CART_URL_PATH}/<cart_id>',
         methods=['DELETE'],
         view_func=delete_cart,
@@ -47,16 +33,6 @@ def list_carts():
 @json_response(200)
 def get_cart(cart_id):
     return cart_service.get(cart_id)
-
-
-@json_response(201)
-def create_cart():
-    return cart_service.create(request.json)
-
-
-@json_response(200)
-def edit_cart(cart_id):
-    return cart_service.update(cart_id, request.json)
 
 
 @json_response(204)
