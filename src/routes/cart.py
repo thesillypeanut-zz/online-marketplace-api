@@ -1,3 +1,5 @@
+from flask import request
+
 from src import constants
 from src.routes.decorators import json_response
 from src.services import cart_service
@@ -27,7 +29,7 @@ def add_routes(app):
 
 @json_response(200)
 def list_carts():
-    return cart_service.list_all()
+    return cart_service.list_all(request.args)
 
 
 @json_response(200)
