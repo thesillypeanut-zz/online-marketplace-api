@@ -6,6 +6,7 @@ from src.services import database_service, cart_service, product_service
 
 logger = logging.getLogger(__name__)
 
+
 def create(cart_item_instance):
     _validate_fields(cart_item_instance)
     _ensure_product_id_and_quantity_are_valid(cart_item_instance)

@@ -1,7 +1,14 @@
 import logging
 from werkzeug import exceptions
 
-from src import db
+from src import app, db
+from src.models import Product
+
+
+def clear():
+    db.drop_all(app=app)
+    db.create_all(app=app)
+    return '', 204
 
 
 def delete_entity_instance(db_model, entity_id):
@@ -29,6 +36,36 @@ def edit_entity_instance(db_model, entity_id, updated_entity_instance):
     db.session.commit()
 
     return entity.serialize()
+
+
+def fill():
+    db.drop_all(app=app)
+    db.create_all(app=app)
+
+    product_1 = Product(title='Wolfsbane Potion', price=10.40, inventory_count=300)
+    product_2 = Product(title='Polyjuice Potion', price=20, inventory_count=500)
+    product_3 = Product(title='Felix Felicis', price=2.30, inventory_count=100)
+    product_4 = Product(title='Confusing Concoction', price=8.99, inventory_count=102)
+    product_5 = Product(title='Hiccoughing Potion', price=3.11, inventory_count=100)
+    product_6 = Product(title='Pepperup Potion', price=0.99, inventory_count=900)
+    product_7 = Product(title='Draught of Peace', price=1.12, inventory_count=80)
+    product_8 = Product(title='Ageing Potion', price=5.30, inventory_count=100)
+    product_9 = Product(title='Unicorn Blood', price=57.88, inventory_count=5)
+    product_10 = Product(title='Veritaserum', price=31.20, inventory_count=10)
+
+    db.session.add(product_1)
+    db.session.add(product_2)
+    db.session.add(product_3)
+    db.session.add(product_4)
+    db.session.add(product_5)
+    db.session.add(product_6)
+    db.session.add(product_7)
+    db.session.add(product_8)
+    db.session.add(product_9)
+    db.session.add(product_10)
+
+    db.session.commit()
+    return '', 204
 
 
 def get_entity_instances(db_model, order_by=None, filter_by=None):
