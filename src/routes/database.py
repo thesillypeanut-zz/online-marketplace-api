@@ -6,9 +6,9 @@ _DB_URL_PATH = f'{constants.BASE_URL_PATH}/db'
 
 def add_routes(app):
     app.add_url_rule(
-        rule=f'{_DB_URL_PATH}/clear',
-        view_func=clear_db,
-        endpoint=clear_db.__name__
+        rule=f'{_DB_URL_PATH}/init',
+        view_func=init_db,
+        endpoint=init_db.__name__
     ),
     app.add_url_rule(
         rule=f'{_DB_URL_PATH}/fill',
@@ -18,8 +18,8 @@ def add_routes(app):
 
 
 @json_response(204)
-def clear_db():
-    return database_service.clear()
+def init_db():
+    return database_service.init()
 
 
 @json_response(200)

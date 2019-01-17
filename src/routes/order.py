@@ -24,12 +24,6 @@ def add_routes(app):
         methods=['POST'],
         view_func=create_order,
         endpoint=create_order.__name__
-    ),
-    app.add_url_rule(
-        rule=f'{_ORDER_URL_PATH}/<order_id>',
-        methods=['DELETE'],
-        view_func=delete_order,
-        endpoint=delete_order.__name__
     )
 
 
@@ -46,8 +40,3 @@ def get_order(order_id):
 @json_response(201)
 def create_order():
     return order_service.create(request.json)
-
-
-@json_response(204)
-def delete_order(order_id):
-    return order_service.delete(order_id)

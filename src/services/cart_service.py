@@ -10,8 +10,8 @@ def delete(cart_id):
     return database_service.delete_entity_instance(Cart, cart_id)
 
 
-def get(cart_id):
-    return database_service.get_entity_instance_by_id(Cart, cart_id)
+def get(cart_id, serialize=True):
+    return database_service.get_entity_instance_by_id(Cart, cart_id, serialize)
 
 
 def list_all(filter_by):

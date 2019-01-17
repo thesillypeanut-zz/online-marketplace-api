@@ -5,12 +5,6 @@ from src import app, db
 from src.models import Product
 
 
-def clear():
-    db.drop_all(app=app)
-    db.create_all(app=app)
-    return '', 204
-
-
 def delete_entity_instance(db_model, entity_id):
     try:
         entity = db_model.query.get_or_404(entity_id)
@@ -84,14 +78,23 @@ def get_entity_instances(db_model, order_by=None, filter_by=None):
     return [entity.serialize() for entity in entities]
 
 
-def get_entity_instance_by_id(db_model, entity_id):
+def get_entity_instance_by_id(db_model, entity_id, serialize=True):
     try:
         entity = db_model.query.get_or_404(entity_id)
     except exceptions.NotFound:
         logging.error(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.')
         raise
 
+    if not serialize:
+        return entity
+
     return entity.serialize()
+
+
+def init():
+    db.drop_all(app=app)
+    db.create_all(app=app)
+    return '', 204
 
 
 def post_entity_instance(db_model, entity_instance=None):

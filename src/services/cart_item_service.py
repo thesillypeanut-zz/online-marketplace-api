@@ -1,6 +1,7 @@
 import logging
 from werkzeug import exceptions
 
+from src.helpers import validate_cart_item_quantity_is_not_more_than_product_inventory
 from src.models import CartItem
 from src.services import database_service, cart_service, product_service
 
@@ -8,14 +9,17 @@ logger = logging.getLogger(__name__)
 
 
 def create(cart_item_instance):
-    _validate_fields(cart_item_instance)
+    _check_for_valid_field_keys(cart_item_instance)
     _ensure_product_id_and_quantity_are_valid(cart_item_instance)
 
     if cart_item_instance.get('cart_id'):
         _ensure_cart_id_is_valid(cart_item_instance['cart_id'])
         return database_service.post_entity_instance(CartItem, cart_item_instance)
 
-    _create_cart_and_update_instance(cart_item_instance)
+    cart = cart_service.create()
+    logger.info(f'Request does not contain a "cart_id". Successfully created a new cart.')
+    cart_item_instance.update({'cart_id': cart['id']})
+
     return database_service.post_entity_instance(CartItem, cart_item_instance)
 
 
@@ -24,7 +28,7 @@ def delete(cart_item_id):
 
 
 def update(cart_item_id, cart_item_instance):
-    _validate_fields(cart_item_instance, False)
+    _check_for_valid_field_keys(cart_item_instance, False)
     _ensure_product_id_and_quantity_are_valid(cart_item_instance, cart_item_id)
 
     return database_service.edit_entity_instance(CartItem, cart_item_id, cart_item_instance)
@@ -48,9 +52,7 @@ def _ensure_product_id_and_quantity_are_valid(cart_item_instance, cart_item_id=N
     product = product_service.get(product_id)
     product_inventory = product['inventory_count']
 
-    if product_inventory < cart_quantity:
-        raise exceptions.BadRequest(f'Cannot add product with id "{product_id}" of quantity "{cart_quantity}". '
-                                    f'The associated product has inventory count of "{product_inventory}".')
+    validate_cart_item_quantity_is_not_more_than_product_inventory(product_inventory, cart_quantity, product_id)
 
 
 def _ensure_cart_id_is_valid(cart_id):
@@ -61,13 +63,7 @@ def _ensure_cart_id_is_valid(cart_id):
                                     'your request. A cart will be created for you.')
 
 
-def _create_cart_and_update_instance(cart_item_instance):
-    cart = cart_service.create()
-    logger.info(f'Request does not contain a "cart_id". Successfully created a new cart.')
-    cart_item_instance.update({'cart_id': cart['id']})
-
-
-def _validate_fields(cart_item_instance, is_post_request=True):
+def _check_for_valid_field_keys(cart_item_instance, is_post_request=True):
     if not is_post_request:
         if set(cart_item_instance) != {'quantity'}:
             raise exceptions.BadRequest('You can only include the "quantity" field in your PUT request.')
