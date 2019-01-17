@@ -27,6 +27,12 @@ def add_routes(app):
     ),
     app.add_url_rule(
         rule=f'{_PRODUCT_URL_PATH}/<product_id>',
+        methods=['PUT'],
+        view_func=edit_product,
+        endpoint=edit_product.__name__
+    ),
+    app.add_url_rule(
+        rule=f'{_PRODUCT_URL_PATH}/<product_id>',
         methods=['DELETE'],
         view_func=delete_product,
         endpoint=delete_product.__name__
@@ -46,6 +52,11 @@ def get_product(product_id):
 @json_response(201)
 def create_product():
     return product_service.create(request.json)
+
+
+@json_response(200)
+def edit_product(product_id):
+    return product_service.update(product_id, request.json)
 
 
 @json_response(204)

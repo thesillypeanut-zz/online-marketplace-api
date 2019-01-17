@@ -33,7 +33,10 @@ def edit_entity_instance(db_model, entity_id, updated_entity_instance):
 
 def get_entity_instances(db_model, order_by=None, filter_by=None):
     try:
-        entities = db_model.query.order_by(order_by).filter_by(**filter_by.to_dict()).all()
+        if filter_by:
+            entities = db_model.query.order_by(order_by).filter_by(**filter_by.to_dict()).all()
+        else:
+            entities = db_model.query.order_by(order_by).all()
     except Exception:
         logging.error(f'Exception encountered while querying "{db_model.__name__}" ordered by "{order_by}".')
         raise

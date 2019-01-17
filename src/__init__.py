@@ -8,8 +8,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
 from src.models import Cart, Product, CartItem, Order
-from src.routes import cart, product, order
+from src.routes import cart, product, cart_item, order
 
 cart.add_routes(app)
 product.add_routes(app)
+cart_item.add_routes(app)
 order.add_routes(app)
