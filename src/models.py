@@ -1,5 +1,7 @@
 from datetime import datetime
+
 from src import db
+from src.services import database_service
 
 
 class Cart(db.Model):
@@ -17,24 +19,6 @@ class Cart(db.Model):
             "date_created": self.date_created,
             "cart_item_count": len(self.cart_items),
             "is_ordered": True if self.order else False
-        }
-
-
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    subtotal = db.Column(db.Float(), nullable=False)
-    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
-    date_ordered = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f"Order('{self.subtotal}', '{self.cart_id}', '{self.date_ordered}')"
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "subtotal": self.subtotal,
-            "cart_id": self.cart_id,
-            "date_ordered": self.date_ordered
         }
 
 
@@ -76,3 +60,30 @@ class CartItem(db.Model):
             "cart_id": self.cart_id,
             "product_id": self.product_id
         }
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subtotal = db.Column(db.Float(), nullable=False, default=0)
+    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
+    date_ordered = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"Order('{self.subtotal}', '{self.cart_id}', '{self.date_ordered}')"
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "subtotal": self.subtotal,
+            "cart_id": self.cart_id,
+            "date_ordered": self.date_ordered
+        }
+
+    # def __init__(self, first_name, last_name, email, password):
+    #     self.first_name = first_name.title()
+    #     self.last_name = last_name.title()
+    #     self.email = email.lower()
+    #     self.set_password(password)
+    #
+    # def calculate_subtotal(self):
+    #     database_service.filter_by(CartItem, {'cart_id': self.cart_id})

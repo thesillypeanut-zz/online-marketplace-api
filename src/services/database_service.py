@@ -31,19 +31,9 @@ def edit_entity_instance(db_model, entity_id, updated_entity_instance):
     return entity.serialize()
 
 
-def filter_by(db_model, filter_by):
+def get_entity_instances(db_model, order_by=None, filter_by=None):
     try:
-        entities = db_model.query.filter_by(**filter_by).all()
-    except Exception:
-        logging.error(f'Exception encountered while querying "{db_model.__name__}" filtered by "{filter_by}".')
-        raise
-
-    return [entity.serialize() for entity in entities]
-
-
-def get_entity_instances(db_model, order_by=None):
-    try:
-        entities = db_model.query.order_by(order_by).all()
+        entities = db_model.query.order_by(order_by).filter_by(**filter_by.to_dict()).all()
     except Exception:
         logging.error(f'Exception encountered while querying "{db_model.__name__}" ordered by "{order_by}".')
         raise

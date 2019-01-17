@@ -1,4 +1,8 @@
+from flask import request
+
 from src import constants
+from src.routes.decorators import json_response
+from src.services import order_service
 
 _ORDER_URL_PATH = f'{constants.BASE_URL_PATH}/orders'
 
@@ -29,17 +33,21 @@ def add_routes(app):
     )
 
 
+@json_response(200)
 def list_orders():
-    pass
+    return order_service.list_all()
 
 
+@json_response(200)
 def get_order(order_id):
-    pass
+    return order_service.get(order_id)
 
 
+@json_response(201)
 def create_order():
-    pass
+    return order_service.create(request.json)
 
 
+@json_response(204)
 def delete_order(order_id):
-    pass
+    return order_service.delete(order_id)
