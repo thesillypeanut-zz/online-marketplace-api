@@ -24,18 +24,20 @@ def create(cart_item_instance):
 
 
 def delete(cart_item_id):
+    _ensure_cart_item_is_not_ordered(cart_item_id)
     return database_service.delete_entity_instance(CartItem, cart_item_id)
 
 
 def update(cart_item_id, cart_item_instance):
     _check_for_valid_field_keys(cart_item_instance, False)
     _ensure_product_id_and_quantity_are_valid(cart_item_instance, cart_item_id)
+    _ensure_cart_item_is_not_ordered(cart_item_id)
 
     return database_service.edit_entity_instance(CartItem, cart_item_id, cart_item_instance)
 
 
-def get(cart_item_id):
-    return database_service.get_entity_instance_by_id(CartItem, cart_item_id)
+def get(cart_item_id, serialize=True):
+    return database_service.get_entity_instance_by_id(CartItem, cart_item_id, serialize)
 
 
 def list_all(filter_by):
@@ -51,6 +53,10 @@ def _ensure_product_id_and_quantity_are_valid(cart_item_instance, cart_item_id=N
     product_id = cart_item_instance['product_id']
     product = product_service.get(product_id)
     product_inventory = product['inventory_count']
+
+    if cart_quantity == 0:
+        raise exceptions.BadRequest(f'Your request contains a "quantity" field value of 0. Cart must contain at '
+                                    f'least one item.')
 
     validate_cart_item_quantity_is_not_more_than_product_inventory(product_inventory, cart_quantity, product_id)
 
@@ -69,7 +75,6 @@ def _check_for_valid_field_keys(cart_item_instance, is_post_request=True):
             raise exceptions.BadRequest('You can only include the "quantity" field in your PUT request.')
         return
 
-
     if cart_item_instance.get('date_added'):
         raise exceptions.BadRequest('Do not include the "date_added" field in your POST request. '
                                     'This is auto-generated at the time of your request.')
@@ -77,3 +82,11 @@ def _check_for_valid_field_keys(cart_item_instance, is_post_request=True):
     if not {'quantity', 'product_id'}.issubset(cart_item_instance):
         raise exceptions.BadRequest('Please include the following fields in your POST request: '
                                     '"quantity", "product_id"')
+
+
+def _ensure_cart_item_is_not_ordered(cart_item_id):
+    cart_item = get(cart_item_id, False)
+    cart = cart_service.get(cart_item.cart_id)
+
+    if cart['is_ordered']:
+        raise exceptions.BadRequest(f'You cannot delete cart item with id "{cart_item_id}" that is already ordered.')

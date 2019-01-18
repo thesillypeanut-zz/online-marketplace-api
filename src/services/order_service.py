@@ -11,13 +11,20 @@ def create(order_instance):
     cart_id = order_instance['cart_id']
     cart = cart_service.get(cart_id, False)
 
+    if cart.serialize()['is_ordered']:
+        raise exceptions.BadRequest(f'Cart with id "{cart_id}" already has an associated order.')
+
     _ensure_order_quantities_are_valid(cart)
     order = database_service.post_entity_instance(Order, order_instance)
 
     for item in cart.cart_items:
         product_id = item.product_id
         product = product_service.get(product_id)
-        product_service.update(item.product_id, {'inventory_count': product['inventory_count'] - item.quantity})
+        product_service.update(
+            item.product_id,
+            {'inventory_count': product['inventory_count'] - item.quantity},
+            item.id
+        )
 
     return order
 

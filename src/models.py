@@ -51,7 +51,7 @@ class CartItem(db.Model):
     product_id = db.Column(UUIDType(binary=False), db.ForeignKey('product.id'), nullable=False)
 
     def __repr__(self):
-        return f"CartItem('{self.cart_id}', '{self.product_id}', '{self.date_added}', '{self.quantity}')"
+        return f"CartItem('{self.id}', '{self.cart_id}', '{self.product_id}', '{self.date_added}', '{self.quantity}')"
 
     def serialize(self):
         return {
