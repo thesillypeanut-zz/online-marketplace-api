@@ -43,7 +43,7 @@ def _check_for_valid_field_keys(order_instance):
 
 
 def _ensure_order_quantities_are_valid(cart):
-    cart_id = cart['id']
+    cart_id = cart.id
 
     if len(cart.cart_items) == 0:
         raise exceptions.BadRequest(f'Cart with id "{cart_id}" does not contain any items to order. Select a cart that '
