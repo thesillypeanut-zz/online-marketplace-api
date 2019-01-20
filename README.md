@@ -53,8 +53,7 @@ following API requests can be found in the "Database Models and API Usage" secti
 
 ## Database Models and API Usage
 
-The database for this online marketplace is designed as follows:
-<img src="/database_design.png"  width="400">
+<img src="/database_design.png">
 
 ### Database
 ```bash
