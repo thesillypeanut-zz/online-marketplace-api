@@ -1,30 +1,37 @@
 import logging
 from werkzeug import exceptions
 
-from src import app, db
+from src import db
+from src.helpers import handle_exception
 from src.models import Product
 
 logger = logging.getLogger(__name__)
 
 
-def delete_entity_instance(db_model, entity_id):
+def delete_entity_instance(db_model, entity_id, is_id_primary_key=True):
     try:
-        entity = db_model.query.get_or_404(entity_id)
+        entity = (
+            db_model.query.get_or_404(entity_id)
+            if is_id_primary_key else
+            db_model.query.filter_by(id=entity_id).first()
+        )
     except exceptions.NotFound:
-        logger.error(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.')
-        return '', 404
+        raise handle_exception(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.', 404)
 
     db.session.delete(entity)
     db.session.commit()
     return '', 204
 
 
-def edit_entity_instance(db_model, entity_id, updated_entity_instance):
+def edit_entity_instance(db_model, entity_id, updated_entity_instance, is_id_primary_key=True):
     try:
-        entity = db_model.query.get_or_404(entity_id)
+        entity = (
+            db_model.query.get_or_404(entity_id)
+            if is_id_primary_key else
+            db_model.query.filter_by(id=entity_id).first()
+        )
     except exceptions.NotFound:
-        logger.error(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.')
-        raise
+        raise handle_exception(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.', 404)
 
     for key in updated_entity_instance:
         setattr(entity, key, updated_entity_instance[key])
@@ -35,8 +42,7 @@ def edit_entity_instance(db_model, entity_id, updated_entity_instance):
 
 
 def fill():
-    db.drop_all(app=app)
-    db.create_all(app=app)
+    db.create_all()
 
     product_1 = Product(title='Wolfsbane Potion', price=10.40, inventory_count=300)
     product_2 = Product(title='Polyjuice Potion', price=20, inventory_count=500)
@@ -74,18 +80,22 @@ def get_entity_instances(db_model, order_by=None, filter_by=None):
         else:
             entities = db_model.query.order_by(order_by).all()
     except Exception:
-        logger.error(f'Exception encountered while querying "{db_model.__name__}" ordered by "{order_by}".')
-        raise
+        raise handle_exception(f'Exception encountered while querying "{db_model.__name__}" ordered by "{order_by}" '
+                     f'filtered by "{filter_by}".')
 
     return [entity.serialize() for entity in entities]
 
 
-def get_entity_instance_by_id(db_model, entity_id, serialize=True):
+def get_entity_instance_by_id(db_model, entity_id, serialize=True, is_id_primary_key=True):
     try:
-        entity = db_model.query.get_or_404(entity_id)
+        entity = (
+            db_model.query.get_or_404(entity_id)
+            if is_id_primary_key else
+            db_model.query.filter_by(id=entity_id).first()
+        )
+
     except exceptions.NotFound:
-        logger.error(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.')
-        raise
+        raise handle_exception(f'Entity type "{db_model.__name__}" with id "{entity_id}" is not found.', 404)
 
     if not serialize:
         return entity
@@ -94,8 +104,8 @@ def get_entity_instance_by_id(db_model, entity_id, serialize=True):
 
 
 def init():
-    db.drop_all(app=app)
-    db.create_all(app=app)
+    db.drop_all()
+    db.create_all()
     return '', 204
 
 

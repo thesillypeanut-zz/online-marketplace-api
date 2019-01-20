@@ -1,17 +1,30 @@
 from flask import Flask
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '6aebb273b8ed6f620238a539c962f934'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+from src.config import Config
 
-db = SQLAlchemy(app)
 
-from src.models import Cart, Product, CartItem, Order
-from src.routes import cart, product, cart_item, order, database
+db = SQLAlchemy()
+bcrypt = Bcrypt()
 
-cart.add_routes(app)
-product.add_routes(app)
-cart_item.add_routes(app)
-order.add_routes(app)
-database.add_routes(app)
+def create_app(config_class=Config):
+    from src.models import Cart, Product, CartItem, Order, User
+
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    db.init_app(app)
+    db.drop_all(app=app)
+    db.create_all(app=app)
+
+    from src.routes import cart, product, cart_item, order, user, database
+    cart.add_routes(app)
+    product.add_routes(app)
+    cart_item.add_routes(app)
+    order.add_routes(app)
+    user.add_routes(app)
+    database.add_routes(app)
+
+    return app

@@ -1,17 +1,15 @@
-from werkzeug import exceptions
-
 from src.models import Cart
 from src.services import database_service
 
 
-def create():
-    return database_service.post_entity_instance(Cart)
+def create(customer_id):
+    return database_service.post_entity_instance(Cart, {'customer_id': customer_id})
 
 
 def delete(cart_id):
     cart = get(cart_id)
     if cart['is_ordered']:
-        raise exceptions.BadRequest(f'You cannot delete cart with id "{cart_id}" that has an associated order.')
+        return f'Bad Request: You cannot delete cart with id "{cart_id}" that has an associated order.', 400
 
     return database_service.delete_entity_instance(Cart, cart_id)
 

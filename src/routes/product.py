@@ -14,6 +14,12 @@ def add_routes(app):
         endpoint=list_products.__name__
     ),
     app.add_url_rule(
+        rule=f'{_PRODUCT_URL_PATH}/available',
+        methods=['GET'],
+        view_func=list_available_products,
+        endpoint=list_available_products.__name__
+    ),
+    app.add_url_rule(
         rule=f'{_PRODUCT_URL_PATH}/<product_id>',
         methods=['GET'],
         view_func=get_product,
@@ -42,6 +48,11 @@ def add_routes(app):
 @json_response(200)
 def list_products():
     return product_service.list_all(request.args)
+
+
+@json_response(200)
+def list_available_products():
+    return product_service.list_all_available()
 
 
 @json_response(200)
