@@ -4,7 +4,7 @@ A simple server side web API that uses CRUD operations to query products and sim
 
 ## Requirements
 
-On a Linux environment, run the following commands:
+Linux:
 ```bash
 sudo add-apt-repository ppa:jonathonf/python-3.6
 sudo apt-get update
@@ -14,6 +14,14 @@ sudo apt-get install curl
 sudo apt-get update
 sudo apt-get install python3-pip
 sudo pip3 install virtualenv
+```
+
+MacOS:
+
+Install [Homebrew](https://brew.sh/).
+```bash
+brew install python3-pip
+pip3 install virtualenv
 ```
 
 ## Getting Started
@@ -28,7 +36,7 @@ virtualenv venv
 source venv/bin/activate
 
 # Install your project dependencies:
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # Start the server:
 python3 run.py
@@ -93,7 +101,7 @@ curl -X DELETE http://localhost:5000/api/v1/products/<product_id>
 # Create a user with a username and password:
 curl -H "Content-Type: application/json" -X POST -d '{"username":"USERNAME", "password":"PASSWORD"}' http://localhost:5000/api/v1/users/
 
-# Login with the username and password you selected:
+# Login with the username and password you selected (Basic Auth):
 curl --user <USERNAME>:<PASSWORD> http://localhost:5000/api/v1/users/login
 ```
 

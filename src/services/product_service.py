@@ -13,13 +13,6 @@ def create(product_instance):
 
 
 def delete(product_id):
-    product = get(product_id, False)
-
-    for item in product.cart_items:
-        cart_item_id = item.id
-        cart_item_service.delete(cart_item_id)
-        logger.info(f'Cart item with id "{cart_item_id}" has been deleted.')
-
     return database_service.delete_entity_instance(Product, product_id)
 
 
@@ -32,6 +25,8 @@ def update(product_id, product_instance, except_cart_item_id=None):
 
         for item in product.cart_items:
             cart_item_id = item.id
+
+            # auto-update cart item quantities (might not be best user experience)
             if cart_item_id != except_cart_item_id and item.quantity > updated_inventory_count:
                 cart_item_service.update(cart_item_id, {'quantity': updated_inventory_count})
                 logger.info(f'Cart item with id "{cart_item_id}" was updated to have a quantity of '

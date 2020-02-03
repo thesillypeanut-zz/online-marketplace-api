@@ -60,16 +60,19 @@ def get_product(product_id):
     return product_service.get(product_id)
 
 
+# TODO: admin authorization needed
 @json_response(201)
 def create_product():
     return product_service.create(request.json)
 
 
+# TODO: admin authorization needed
 @json_response(200)
 def edit_product(product_id):
     return product_service.update(product_id, request.json)
 
 
+# TODO: admin authorization needed
 @json_response(204)
 def delete_product(product_id):
     return product_service.delete(product_id)

@@ -38,7 +38,8 @@ def get(order_id):
 
 def list_all(cart_ids):
     try:
-        orders = Order.query.filter(Order.cart_id.in_(cart_ids)).order_by(Order.date_ordered).all()
+        orders = Order.query.filter(Order.cart_id.in_(
+            cart_ids)).order_by(Order.date_ordered).all()
     except Exception:
         raise handle_exception(f'Exception encountered while querying orders.')
 
@@ -47,7 +48,8 @@ def list_all(cart_ids):
 
 def _check_for_valid_field_keys(order_instance):
     if set(order_instance) != {'cart_id'}:
-       raise handle_exception('Bad Request: Your POST request must include (only) the "cart_id" field.', 400)
+        raise handle_exception(
+            'Bad Request: Your POST request must include (only) the "cart_id" field.', 400)
 
 
 def _ensure_order_quantities_are_valid_and_get_subtotal(cart):
@@ -65,6 +67,7 @@ def _ensure_order_quantities_are_valid_and_get_subtotal(cart):
         product_inventory = product['inventory_count']
         order_quantity = item.quantity
         subtotal += item.quantity * product['price']
-        validate_cart_item_quantity_is_not_more_than_product_inventory(product_inventory, order_quantity, product_id)
+        validate_cart_item_quantity_is_not_more_than_product_inventory(
+            product_inventory, order_quantity, product_id)
 
     return subtotal

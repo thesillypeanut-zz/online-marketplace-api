@@ -57,7 +57,7 @@ class Product(db.Model):
     title = db.Column(db.String(120), nullable=False)
     price = db.Column(db.Float(), nullable=False)
     inventory_count = db.Column(db.Integer(), nullable=False)
-    cart_items = db.relationship('CartItem', backref='product', lazy=True)
+    cart_items = db.relationship('CartItem', backref='product', lazy=True, cascade="delete")
 
     def __repr__(self):
         return f"Product('{self.title}', '{self.price}', '{self.inventory_count}')"
